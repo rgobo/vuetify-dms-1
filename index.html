@@ -22,10 +22,11 @@
 						<!-- Add button -->
 						<v-dialog v-model="addDialogVisible" persistent max-width="600px">
 							<template v-slot:activator="{ on, attrs }">
-								<v-btn color="primary" dark v-bind="attrs" v-on="on">
+								<v-btn color="primary" dark @click="onClickAdd">
 									Add new
 								</v-btn>
 							</template>
+
 							<v-card>
 								<v-card-title>
 									<span class="headline">User Profile</span>
@@ -34,10 +35,11 @@
 									<v-container>
 										<v-row>
 											<v-col cols="12" sm="6" md="4">
-												<v-text-field label="Legal first name*" required></v-text-field>
+												<v-text-field v-model="formData.name" label="Legal first name*"
+													required></v-text-field>
 											</v-col>
 											<v-col cols="12" sm="6" md="4">
-												<v-text-field label="Legal middle name"
+												<v-text-field v-model="formData.desc" label="Legal middle name"
 													hint="example of helper text only on focus"></v-text-field>
 											</v-col>
 											<v-col cols="12" sm="6" md="4">
@@ -67,8 +69,7 @@
 								<v-card-actions>
 									<v-spacer></v-spacer>
 									<v-btn color="blue darken-1" text @click="addDialogVisible = false">Close</v-btn>
-									<v-btn color="blue darken-1" text
-										@click="addDialogVisible = false; this.alert('1');">Save</v-btn>
+									<v-btn color="blue darken-1" text @click="onClickSave">Save</v-btn>
 								</v-card-actions>
 							</v-card>
 						</v-dialog>
@@ -83,7 +84,8 @@
 					</v-card-title>
 
 					<!-- Data table -->
-					<v-data-table :headers="headers" :items="desserts" :search="search" :loading="isLoading">
+					<v-data-table :headers="headers" :items="desserts" :search="search" :loading="isLoading"
+						@click:row="onClickEdit">
 					</v-data-table>
 				</v-card>
 			</v-container>
@@ -109,7 +111,7 @@
 						.get(url)
 						.then(onSuccess)
 						.catch(onError)
-						.then(onDone);;
+						.then(onDone);
 					return res;
 				},
 			},
@@ -124,8 +126,9 @@
 			}),
 			data() {
 				return {
-					// Main
+					// Dialog
 					addDialogVisible: false,
+					formData: {},
 
 					// Search
 					search: null,
@@ -142,30 +145,48 @@
 						},
 						{
 							text: "Calories",
-							value: "calories"
+							value: "calories",
 						},
 						{
 							text: "Fat (g)",
-							value: "fat"
+							value: "fat",
 						},
 						{
 							text: "Carbs (g)",
-							value: "carbs"
+							value: "carbs",
 						},
 						{
 							text: "Protein (g)",
-							value: "protein"
+							value: "protein",
 						},
 						{
 							text: "Iron (%)",
-							value: "iron"
+							value: "iron",
 						},
 					],
-					desserts: []
+					desserts: [],
 				};
 			},
+			methods: {
+				onClickAdd() {
+					this.addDialogVisible = true;
+					this.formData = {}
+				},
+				onClickEdit(item, data) {
+					this.addDialogVisible = true;
+					this.formData = {
+						name: item.name,
+						desc: item.calories
+					}
+				},
+				onClickSave() {
+					this.addDialogVisible = false;
+					alert('1');
+				}
+			},
 			mounted() {
-				this.AxiosGet(this.DataServiceBaseUrl + "/Desserts",
+				this.AxiosGet(
+					this.DataServiceBaseUrl + "/Desserts",
 					(response) => {
 						this.desserts = response.data;
 					},
@@ -176,7 +197,7 @@
 					() => {
 						this.isLoading = false;
 					}
-				)
+				);
 			},
 		});
 	</script>
