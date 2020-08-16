@@ -101,6 +101,7 @@
 											text
 											@click="onClickDelete"
 											:loading="btnDeleteIsLoading"
+											v-if="formData.id > 0"
 											>Delete</v-btn
 										>
 										<v-spacer></v-spacer>
