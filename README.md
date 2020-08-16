@@ -1,3 +1,5 @@
-npm install json-server
+npm install
+(npm install json-server)
 
-json-server --watch db.json
+start-db.bat
+(json-server --watch db.json)
